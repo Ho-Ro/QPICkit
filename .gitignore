@@ -1,0 +1,21 @@
+# build artifacts
+.qmake.stash
+Makefile
+QPICkit
+moc_*
+qrc_*
+ui_*
+*.o
+
+# editor backups
+.*~
+*~
+
+# test versions
+*.bak
+*.new
+*.old
+*.orig
+
+# intel hex files used for test
+*.hex

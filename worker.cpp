@@ -40,7 +40,7 @@ void Worker::worker_slot_executeCommand(QStringList aobArguments){
 
 /**
   Ejecuta el comando para recuperar la información del
-  Pickit2 conectado.
+  PICkit2 conectado.
 */
 void Worker::worker_slot_pickitInfo()
 {

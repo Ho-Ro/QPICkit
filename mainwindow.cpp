@@ -173,7 +173,7 @@ void MainWindow::on_readButton_clicked()
 /**
   Evento de click para el botón Detect programmer
 */
-void MainWindow::on_detectPickitButton_clicked()
+void MainWindow::on_detectPICkitButton_clicked()
 {
     ui->pickitInfoTextArea->clear();
     emit(main_signal_pickitInfo());
@@ -212,13 +212,13 @@ void MainWindow::main_slot_taskCompleted(bool abExitStatus, QString asExitString
 */
 void MainWindow::on_aboutButton_clicked()
 {
-    const char *lsHelpText = ("<h2>QPickit 2.1</h2>"
+    const char *lsHelpText = ("<h2>QPICkit 2.1</h2>"
                 "<p>pk2cmd GUI for Linux"
-                "<br>Pickit 2 clone compatible"
+                "<br>PICkit 2 clone compatible"
                 "<p> Author: Jaime A. Quiroga P."
                 "<br><a href=\"http://www.gtronick.com\">www.gtronick.com</a>");
 
-    QMessageBox::about(this, tr("About QPickit 2.1"),
+    QMessageBox::about(this, tr("About QPICkit 2.1"),
     tr(lsHelpText));
 }
 
