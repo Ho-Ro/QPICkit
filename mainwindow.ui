@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>QPICkit 2.1</string>
+   <string>QPICkit 2.2</string>
   </property>
   <property name="windowIcon">
    <iconset resource="img/img.qrc">
@@ -69,7 +69,13 @@
          </widget>
         </item>
         <item row="1" column="0" colspan="2">
-         <widget class="QLineEdit" name="hexFileLineEdit"/>
+         <widget class="QLineEdit" name="hexFileLineEdit">
+          <property name="font">
+           <font>
+            <family>Noto Sans</family>
+           </font>
+          </property>
+         </widget>
         </item>
         <item row="2" column="0">
          <widget class="QPushButton" name="programButton">
@@ -269,6 +275,11 @@
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">
          <widget class="QPlainTextEdit" name="logTextArea">
+          <property name="font">
+           <font>
+            <family>Noto Mono</family>
+           </font>
+          </property>
           <property name="readOnly">
            <bool>true</bool>
           </property>
@@ -295,7 +306,7 @@
         <item row="2" column="1">
          <widget class="QLineEdit" name="setNewIDLineEdit">
           <property name="text">
-           <string>PICKIT2</string>
+           <string>PICkit2</string>
           </property>
           <property name="maxLength">
            <number>14</number>
@@ -306,6 +317,11 @@
          <widget class="QPlainTextEdit" name="pickitInfoTextArea">
           <property name="enabled">
            <bool>true</bool>
+          </property>
+          <property name="font">
+           <font>
+            <family>Noto Mono</family>
+           </font>
           </property>
           <property name="acceptDrops">
            <bool>false</bool>

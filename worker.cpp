@@ -8,9 +8,8 @@ Worker::Worker(QObject *parent) : QObject(parent)
 }
 
 /**
-  Ejecuta el comando pk2cmd con los argumentos que llegan como
-  argumento en un arreglo.
-  @param aobArguments - QStringList, Arreglo de argumentos
+  Execute the pk2cmd command with the arguments arriving in an array.
+  @param aobArguments - QStringList, array of arguments
 */
 void Worker::worker_slot_executeCommand(QStringList aobArguments){
 
@@ -39,19 +38,18 @@ void Worker::worker_slot_executeCommand(QStringList aobArguments){
 }
 
 /**
-  Ejecuta el comando para recuperar la información del
-  PICkit2 conectado.
+  Execute the command to retrieve the information from the connected PICkit2.
 */
 void Worker::worker_slot_pickitInfo()
 {
     giInfoFlag = 1;
     QStringList lobArguments;
-    lobArguments << "-S";
+    lobArguments << "-s#";
     this->worker_slot_executeCommand(lobArguments);
 }
 
 /**
-  Envía la salida del comando ejecutado al hilo principal.
+  Sends the output of the executed command to the main thread.
 */
 void Worker::worker_slot_internalProcessOutputCapture()
 {

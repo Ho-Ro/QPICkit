@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QLoggingCategory>
 
 /**
   Constructor de la clase MainWindow
@@ -13,6 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    // suppress nasty warnings, e.g. "qt.qpa.xcb: QXcbConnection: XCB error: 3 (BadWindow) ..."
+    QLoggingCategory::setFilterRules( "qt.qpa.xcb=false" );
     ui->setupUi(this);
 
     gobWorker = new Worker;
@@ -39,11 +42,11 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 /**
-  Habilita o deshabilita todos los botones del tab principal
-  para evitar envíos de comandos indeseados durante la
-  ejecución de un proceso.
-  @param abValue - true: Habilita todos los botones,
-                   false: Deshabilita todos los botones.
+  Enables or disables all buttons on the main tab
+  to avoid sending unwanted commands
+  during the execution of a process.
+  @param abValue - true: Enable all buttons,
+                   false: Disable all buttons.
 */
 void MainWindow::main_slot_enableAllButtons(bool abValue)
 {
@@ -67,7 +70,7 @@ MainWindow::~MainWindow()
 }
 
 /**
-  Evento de click para el botón HEX File...
+  Click event for button "HEX File..."
 */
 void MainWindow::on_hexFileButton_clicked()
 {
@@ -76,7 +79,7 @@ void MainWindow::on_hexFileButton_clicked()
 }
 
 /**
-  Evento de click para el botón Burn
+  Click event for button "Burn"
 */
 void MainWindow::on_programButton_clicked()
 {
@@ -91,7 +94,7 @@ void MainWindow::on_programButton_clicked()
     if(!gsHexFileName.isNull() && !gsHexFileName.isEmpty()){
         gsHexFileName = lobDir.relativeFilePath(ui->hexFileLineEdit->text());
 
-        gobArguments << "-p" << "-f" << gsHexFileName << "-m" << "-r";
+        gobArguments << "-p" << "-f" << gsHexFileName << "-m" << "-j";
         emit(main_signal_executeCommand(gobArguments));
     }else{
         QMessageBox::critical(this,"ERROR","Please, select a valid Hex file");
@@ -99,7 +102,7 @@ void MainWindow::on_programButton_clicked()
 }
 
 /**
-  Evento de click para el botón Contact
+  Click event for button "Contact"
 */
 void MainWindow::on_contactButton_clicked()
 {
@@ -108,7 +111,7 @@ void MainWindow::on_contactButton_clicked()
 }
 
 /**
-  Evento de click para el botón Erase
+  Click event for button "Erase""
 */
 void MainWindow::on_eraseButton_clicked()
 {
@@ -117,7 +120,7 @@ void MainWindow::on_eraseButton_clicked()
 }
 
 /**
-  Evento de click para el botón Reset
+  Click event for button "Reset"
 */
 void MainWindow::on_resetButton_clicked()
 {
@@ -126,7 +129,7 @@ void MainWindow::on_resetButton_clicked()
 }
 
 /**
-  Evento de click para el botón Verify
+  Click event for button "Verify"
 */
 void MainWindow::on_verifyButton_clicked()
 {
@@ -142,7 +145,7 @@ void MainWindow::on_verifyButton_clicked()
     if(!gsHexFileName.isNull() && !gsHexFileName.isEmpty()){
         gsHexFileName = lobDir.relativeFilePath(ui->hexFileLineEdit->text());
 
-        gobArguments << "-p" << "-f" << gsHexFileName << "-y";
+        gobArguments << "-p" << "-f" << gsHexFileName << "-y" << "-j";
         emit(main_signal_executeCommand(gobArguments));
     }else{
         QMessageBox::critical(this,"ERROR","Please, select a valid Hex file");
@@ -150,7 +153,7 @@ void MainWindow::on_verifyButton_clicked()
 }
 
 /**
-  Evento de click para el botón Read
+  Click event for button "Read"
 */
 void MainWindow::on_readButton_clicked()
 {
@@ -163,7 +166,7 @@ void MainWindow::on_readButton_clicked()
         ui->hexFileLineEdit->setText(gsHexFileName);
         gsHexFileName = lobDir.relativeFilePath(ui->hexFileLineEdit->text());
 
-        gobArguments << "-p" << "-gf" << gsHexFileName;
+        gobArguments << "-p" << "-gf" << gsHexFileName << "-j";
         emit(main_signal_executeCommand(gobArguments));
     }else{
         QMessageBox::critical(this,"ERROR","Please, select a valid Hex file");
@@ -171,7 +174,7 @@ void MainWindow::on_readButton_clicked()
 }
 
 /**
-  Evento de click para el botón Detect programmer
+  Click event for button "Detect programmer"
 */
 void MainWindow::on_detectPICkitButton_clicked()
 {
@@ -180,10 +183,19 @@ void MainWindow::on_detectPICkitButton_clicked()
 }
 
 /**
-  Prepara a la aplicación para ejecutar el siguiente
-  comando, borrando el log de eventos, deshabilitando
-  todos los botones del tab principal y limpiando
-  el arreglo de argumentos.
+  Click event for button "Set New ID"
+*/
+void MainWindow::on_setNewIDButton_clicked()
+{
+    gobArguments << "-n" << ui->setNewIDLineEdit->text();
+    emit(main_signal_executeCommand(gobArguments));
+}
+
+/**
+  Prepares the application to execute the following command,
+  clearing the event log,
+  disabling all buttons on the main tab
+  and clearing the argument array.
 */
 void MainWindow::main_slot_prepareCommandExecution()
 {
@@ -193,11 +205,11 @@ void MainWindow::main_slot_prepareCommandExecution()
 }
 
 /**
-  Slot que se ejecuta cuando el comando actual ha sido
-  notificado como terminado por la clase Worker.
-  @param abExitStatus - true: El comando se ejecutó correctamente.
-                        false: El comando falló.
-         asExitString - Cadena que contiene el texto del error producido.
+  Slot which is executed when the current command has been
+  notified as completed by the Worker class.
+  @param abExitStatus - true: The command was executed successfully.
+                        false: The command failed.
+         asExitString - String containing the text of the error occurred.
 */
 void MainWindow::main_slot_taskCompleted(bool abExitStatus, QString asExitString)
 {
@@ -208,22 +220,22 @@ void MainWindow::main_slot_taskCompleted(bool abExitStatus, QString asExitString
 }
 
 /**
-  Evento de click para el botón About
+  Click event for button "About"
 */
 void MainWindow::on_aboutButton_clicked()
 {
-    const char *lsHelpText = ("<h2>QPICkit 2.1</h2>"
+    const char *lsHelpText = ("<h2>QPICkit 2.2</h2>"
                 "<p>pk2cmd GUI for Linux"
                 "<br>PICkit 2 clone compatible"
-                "<p> Author: Jaime A. Quiroga P."
-                "<br><a href=\"http://www.gtronick.com\">www.gtronick.com</a>");
+                "<br><a href=\"https://github.com/Ho-Ro/QPICkit\">https://github.com/Ho-Ro/QPICkit</a>"
+                "<p> Author: Jaime A. Quiroga P.");
 
-    QMessageBox::about(this, tr("About QPICkit 2.1"),
+    QMessageBox::about(this, tr("About QPICkit 2.2"),
     tr(lsHelpText));
 }
 
 /**
-  Evento de click para establecer el tema por defecto
+  Click event for "Default" theme
 */
 void MainWindow::on_defaultThemeRadioButton_clicked()
 {
@@ -231,7 +243,7 @@ void MainWindow::on_defaultThemeRadioButton_clicked()
 }
 
 /**
-  Evento de click para establecer un tema personalizado
+  Click event for "Custom" theme
 */
 void MainWindow::on_customThemeRadioButton_clicked()
 {
@@ -243,24 +255,28 @@ void MainWindow::on_customThemeRadioButton_clicked()
 }
 
 /**
-  Slot que agrega la salida del comando ejecutado en
-  el visor del log, y en la barra de estado.
-  @param asCommandOutput - String que contiene la salida
-  del comando ejecutado.
+  Slot that adds the output of the executed command in the log viewer,
+  and in the status bar.
+  @param asCommandOutput - String containing the output of the executed command.
 */
 void MainWindow::main_slot_processOutput(QString asCommandOutput)
 {
-    if(!asCommandOutput.isNull() && asCommandOutput != "\n") {
-        ui->logTextArea->appendPlainText(asCommandOutput);
-        ui->statusBar->showMessage(asCommandOutput.simplified(),2000);
+    if(!asCommandOutput.isNull() && asCommandOutput != "\n" && asCommandOutput != "\r") {
+        if ( asCommandOutput.startsWith("\r") ) { // replace current line
+            ui->logTextArea->moveCursor(QTextCursor::StartOfLine, QTextCursor::KeepAnchor);
+            ui->logTextArea->insertPlainText(asCommandOutput.remove('\r'));
+        } else { // append new line
+            ui->logTextArea->appendPlainText(asCommandOutput.remove('\r'));
+        }
+        ui->statusBar->showMessage(asCommandOutput.simplified(),5000);
     }
 }
 
 /**
-  Slot que inserta la información del pickit2 conectado
-  actualmente, al visor de log.
-  @param asPicKitInfo - String que contiene la información
-  recuperada del PicKit2 conectado.
+  Slot that inserts the information of the currently connected pickit2
+  to the log viewer.
+  @param asPicKitInfo - String containing the information retrieved
+                        from the connected PicKit2.
 */
 void MainWindow::main_slot_pickitInfo(QString asPicKitInfo)
 {
