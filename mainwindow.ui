@@ -17,11 +17,11 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>QPICkit 2.2</string>
+   <string>QPICkit</string>
   </property>
   <property name="windowIcon">
    <iconset resource="img/img.qrc">
-    <normaloff>:/icon.png</normaloff>:/icon.png</iconset>
+    <normaloff>:/PICkit2.png</normaloff>:/PICkit2.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
@@ -30,13 +30,13 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="tab">
+      <widget class="QWidget" name="tabPIC">
        <attribute name="icon">
         <iconset resource="img/img.qrc">
          <normaloff>:/processor.png</normaloff>:/processor.png</iconset>
        </attribute>
        <attribute name="title">
-        <string>&amp;MCU</string>
+        <string>&amp;PIC</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0" colspan="2">
@@ -92,7 +92,7 @@
            </size>
           </property>
           <property name="text">
-           <string>&amp;Burn</string>
+           <string>&amp;Program</string>
           </property>
           <property name="icon">
            <iconset resource="img/img.qrc">
@@ -107,7 +107,7 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QPushButton" name="contactButton">
+         <widget class="QPushButton" name="detectButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -121,11 +121,11 @@
            </size>
           </property>
           <property name="text">
-           <string>&amp;Contact</string>
+           <string>&amp;Detect PIC</string>
           </property>
           <property name="icon">
            <iconset resource="img/img.qrc">
-            <normaloff>:/contact.png</normaloff>:/contact.png</iconset>
+            <normaloff>:/processor.png</normaloff>:/processor.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -136,93 +136,6 @@
          </widget>
         </item>
         <item row="3" column="0">
-         <widget class="QPushButton" name="resetButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>43</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>&amp;Reset</string>
-          </property>
-          <property name="icon">
-           <iconset resource="img/img.qrc">
-            <normaloff>:/refresh.png</normaloff>:/refresh.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>32</width>
-            <height>32</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QPushButton" name="eraseButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>43</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>&amp;Erase</string>
-          </property>
-          <property name="icon">
-           <iconset resource="img/img.qrc">
-            <normaloff>:/eraser.png</normaloff>:/eraser.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>32</width>
-            <height>32</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QPushButton" name="readButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>43</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Rea&amp;d</string>
-          </property>
-          <property name="icon">
-           <iconset resource="img/img.qrc">
-            <normaloff>:/read.png</normaloff>:/read.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>32</width>
-            <height>32</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
          <widget class="QPushButton" name="verifyButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -251,6 +164,93 @@
           </property>
          </widget>
         </item>
+        <item row="3" column="1">
+         <widget class="QPushButton" name="blankCheckButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>43</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>&amp;Blank Check</string>
+          </property>
+          <property name="icon">
+           <iconset resource="img/img.qrc">
+            <normaloff>:/refresh.png</normaloff>:/refresh.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QPushButton" name="readButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>43</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>&amp;Read</string>
+          </property>
+          <property name="icon">
+           <iconset resource="img/img.qrc">
+            <normaloff>:/read.png</normaloff>:/read.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QPushButton" name="eraseButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>43</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>&amp;Erase</string>
+          </property>
+          <property name="icon">
+           <iconset resource="img/img.qrc">
+            <normaloff>:/eraser.png</normaloff>:/eraser.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+         </widget>
+        </item>
         <item row="5" column="0" colspan="2">
          <widget class="QPushButton" name="aboutButton">
           <property name="text">
@@ -264,7 +264,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_2">
+      <widget class="QWidget" name="tabLog">
        <attribute name="icon">
         <iconset resource="img/img.qrc">
          <normaloff>:/log.png</normaloff>:/log.png</iconset>
@@ -287,13 +287,13 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_4">
+      <widget class="QWidget" name="tabPICkit2">
        <attribute name="icon">
         <iconset resource="img/img.qrc">
-         <normaloff>:/port.png</normaloff>:/port.png</iconset>
+         <normaloff>:/PICkit2.png</normaloff>:/PICkit2.png</iconset>
        </attribute>
        <attribute name="title">
-        <string>&amp;PICKit 2</string>
+        <string>&amp;PICKit2</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="2" column="0">
@@ -336,11 +336,15 @@
           <property name="text">
            <string>Detect programmer</string>
           </property>
+          <property name="icon">
+           <iconset resource="img/img.qrc">
+            <normaloff>:/PICkit2.png</normaloff>:/PICkit2.png</iconset>
+          </property>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_3">
+      <widget class="QWidget" name="tabSettings">
        <attribute name="icon">
         <iconset resource="img/img.qrc">
          <normaloff>:/configuration.png</normaloff>:/configuration.png</iconset>

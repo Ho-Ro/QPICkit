@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>PICkit2.png</file>
         <file>alarm.png</file>
         <file>browse.png</file>
         <file>burn.png</file>

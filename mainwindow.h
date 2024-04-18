@@ -26,9 +26,9 @@ private slots:
     void on_defaultThemeRadioButton_clicked();
     void main_slot_processOutput(QString asCommandOutput);
     void main_slot_pickitInfo(QString asPicKitInfo);
-    void on_contactButton_clicked();
+    void on_detectButton_clicked();
     void on_eraseButton_clicked();
-    void on_resetButton_clicked();
+    void on_blankCheckButton_clicked();
     void on_verifyButton_clicked();
     void on_readButton_clicked();
     void on_detectPICkitButton_clicked();
@@ -47,6 +47,7 @@ private:
     QThread *workerThread;
     QStringList gobArguments;
     Worker *gobWorker;
+    QString programVersion;
 };
 
 #endif // MAINWINDOW_H

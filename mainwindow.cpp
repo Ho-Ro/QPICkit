@@ -18,6 +18,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QLoggingCategory::setFilterRules( "qt.qpa.xcb=false" );
     ui->setupUi(this);
 
+    programVersion = "v2.2";
+
+    setWindowTitle(QString("PICkit2 %1").arg(programVersion));
+
     gobWorker = new Worker;
     workerThread = new QThread;
     gobWorker->moveToThread(workerThread);
@@ -38,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }else{
         this->ui->defaultThemeRadioButton->setChecked(true);
         this->ui->customThemeRadioButton->setChecked(false);
+        this->ui->customThemeRadioButton->setEnabled(false);
     }
 }
 
@@ -50,13 +55,13 @@ MainWindow::MainWindow(QWidget *parent) :
 */
 void MainWindow::main_slot_enableAllButtons(bool abValue)
 {
-    ui->contactButton->setEnabled(abValue);
+    ui->detectButton->setEnabled(abValue);
     ui->programButton->setEnabled(abValue);
     ui->verifyButton->setEnabled(abValue);
     ui->eraseButton->setEnabled(abValue);
     ui->readButton->setEnabled(abValue);
     ui->hexFileButton->setEnabled(abValue);
-    ui->resetButton->setEnabled(abValue);
+    ui->blankCheckButton->setEnabled(abValue);
 }
 
 /**
@@ -102,9 +107,9 @@ void MainWindow::on_programButton_clicked()
 }
 
 /**
-  Click event for button "Contact"
+  Click event for button "Detect"
 */
-void MainWindow::on_contactButton_clicked()
+void MainWindow::on_detectButton_clicked()
 {
     gobArguments << "-p" << "-i";
     emit(main_signal_executeCommand(gobArguments));
@@ -120,11 +125,11 @@ void MainWindow::on_eraseButton_clicked()
 }
 
 /**
-  Click event for button "Reset"
+  Click event for button "Blank Check"
 */
-void MainWindow::on_resetButton_clicked()
+void MainWindow::on_blankCheckButton_clicked()
 {
-    gobArguments << "-p" << "-r";
+    gobArguments << "-p" << "-c" << "-j";
     emit(main_signal_executeCommand(gobArguments));
 }
 
@@ -224,13 +229,12 @@ void MainWindow::main_slot_taskCompleted(bool abExitStatus, QString asExitString
 */
 void MainWindow::on_aboutButton_clicked()
 {
-    const char *lsHelpText = ("<h2>QPICkit 2.2</h2>"
-                "<p>pk2cmd GUI for Linux"
-                "<br>PICkit 2 clone compatible"
-                "<br><a href=\"https://github.com/Ho-Ro/QPICkit\">https://github.com/Ho-Ro/QPICkit</a>"
-                "<p> Author: Jaime A. Quiroga P.");
+    const char *lsHelpText = ("<h2>QPICkit</h2>"
+                "<p>pk2cmd GUI for Linux<br/>"
+                "Use with PICkit2 and compatible programmer</p>"
+                "<p><a href=\"https://github.com/Ho-Ro/QPICkit\">https://github.com/Ho-Ro/QPICkit</a></p>");
 
-    QMessageBox::about(this, tr("About QPICkit 2.2"),
+    QMessageBox::about(this, tr("About QPICkit %1").arg(programVersion),
     tr(lsHelpText));
 }
 
@@ -261,12 +265,13 @@ void MainWindow::on_customThemeRadioButton_clicked()
 */
 void MainWindow::main_slot_processOutput(QString asCommandOutput)
 {
-    if(!asCommandOutput.isNull() && asCommandOutput != "\n" && asCommandOutput != "\r") {
+    if (!asCommandOutput.isNull() && asCommandOutput != "\n" && asCommandOutput != "\r"
+        && asCommandOutput != "\r                              \r") { // ignore white space lines
         if ( asCommandOutput.startsWith("\r") ) { // replace current line
             ui->logTextArea->moveCursor(QTextCursor::StartOfLine, QTextCursor::KeepAnchor);
-            ui->logTextArea->insertPlainText(asCommandOutput.remove('\r'));
+            ui->logTextArea->insertPlainText(asCommandOutput.remove(0, 1)); // remove leading '\r' );
         } else { // append new line
-            ui->logTextArea->appendPlainText(asCommandOutput.remove('\r'));
+            ui->logTextArea->appendPlainText(asCommandOutput);
         }
         ui->statusBar->showMessage(asCommandOutput.simplified(),5000);
     }
