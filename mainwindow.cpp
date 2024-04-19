@@ -134,7 +134,7 @@ void MainWindow::on_programButton_clicked() {
         gsHexFileName = lobDir.relativeFilePath( ui->hexFileLineEdit->text() );
 
         gobArguments = progCmds[ activeProgrammer ][ "Program" ] + QStringList( gsHexFileName );
-        emit( main_signal_executeCommand( gobArguments ) );
+        emit main_signal_executeCommand( gobArguments );
     } else {
         QMessageBox::critical( this, "ERROR", "Please, select a valid Hex file" );
     }
@@ -145,7 +145,7 @@ void MainWindow::on_programButton_clicked() {
 */
 void MainWindow::on_detectButton_clicked() {
     gobArguments = progCmds[ activeProgrammer ][ "Detect" ];
-    emit( main_signal_executeCommand( gobArguments ) );
+    emit main_signal_executeCommand( gobArguments );
 }
 
 /**
@@ -153,7 +153,7 @@ void MainWindow::on_detectButton_clicked() {
 */
 void MainWindow::on_eraseButton_clicked() {
     gobArguments = progCmds[ activeProgrammer ][ "Erase" ];
-    emit( main_signal_executeCommand( gobArguments ) );
+    emit main_signal_executeCommand( gobArguments );
 }
 
 /**
@@ -163,7 +163,7 @@ void MainWindow::on_blankCheckButton_clicked() {
     gobArguments << "-p"
                  << "-c"
                  << "-j";
-    emit( main_signal_executeCommand( gobArguments ) );
+    emit main_signal_executeCommand( gobArguments );
 }
 
 /**
@@ -183,7 +183,7 @@ void MainWindow::on_verifyButton_clicked() {
         gsHexFileName = lobDir.relativeFilePath( ui->hexFileLineEdit->text() );
 
         gobArguments = progCmds[ activeProgrammer ][ "Verify" ] + QStringList( gsHexFileName );
-        emit( main_signal_executeCommand( gobArguments ) );
+        emit main_signal_executeCommand( gobArguments );
     } else {
         QMessageBox::critical( this, "ERROR", "Please, select a valid Hex file" );
     }
@@ -203,7 +203,7 @@ void MainWindow::on_readButton_clicked() {
         gsHexFileName = lobDir.relativeFilePath( ui->hexFileLineEdit->text() );
 
         gobArguments = progCmds[ activeProgrammer ][ "Read" ] + QStringList( gsHexFileName );
-        emit( main_signal_executeCommand( gobArguments ) );
+        emit main_signal_executeCommand( gobArguments );
     } else {
         QMessageBox::critical( this, "ERROR", "Please, select a valid Hex file" );
     }
@@ -214,7 +214,7 @@ void MainWindow::on_readButton_clicked() {
 */
 void MainWindow::on_detectPICkitButton_clicked() {
     ui->pickitInfoTextArea->clear();
-    emit( main_signal_pickitInfo() );
+    emit main_signal_pickitInfo();
 }
 
 /**
@@ -222,7 +222,7 @@ void MainWindow::on_detectPICkitButton_clicked() {
 */
 void MainWindow::on_setNewIDButton_clicked() {
     gobArguments << "-n" << ui->setNewIDLineEdit->text();
-    emit( main_signal_executeCommand( gobArguments ) );
+    emit main_signal_executeCommand( gobArguments );
 }
 
 /**
