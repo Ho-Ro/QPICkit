@@ -1,4 +1,5 @@
 # build artifacts
+QPICkit.pro.user
 .qmake.stash
 Makefile
 QPICkit
@@ -19,3 +20,7 @@ ui_*
 
 # intel hex files used for test
 *.hex
+
+# programmer binaries
+pk2cmd
+ardpicprog

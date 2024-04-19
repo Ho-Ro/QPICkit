@@ -352,7 +352,7 @@
        <attribute name="title">
         <string>&amp;Settings</string>
        </attribute>
-       <widget class="QRadioButton" name="defaultThemeRadioButton">
+       <widget class="QRadioButton" name="pk2RadioButton">
         <property name="geometry">
          <rect>
           <x>50</x>
@@ -362,10 +362,13 @@
          </rect>
         </property>
         <property name="text">
-         <string>&amp;Default</string>
+         <string>&amp;PICkit2</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
-       <widget class="QRadioButton" name="customThemeRadioButton">
+       <widget class="QRadioButton" name="appRadioButton">
         <property name="geometry">
          <rect>
           <x>50</x>
@@ -375,23 +378,23 @@
          </rect>
         </property>
         <property name="text">
-         <string>&amp;Custom</string>
+         <string>&amp;ArdPicProg</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
-       <widget class="QLabel" name="themeLabel">
+       <widget class="QLabel" name="programmerLabel">
         <property name="geometry">
          <rect>
           <x>20</x>
           <y>10</y>
-          <width>59</width>
-          <height>14</height>
+          <width>100</width>
+          <height>20</height>
          </rect>
         </property>
         <property name="text">
-         <string>Theme</string>
+         <string>Programmer</string>
         </property>
        </widget>
       </widget>

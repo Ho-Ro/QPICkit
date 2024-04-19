@@ -14,7 +14,7 @@ Worker::Worker(QObject *parent) : QObject(parent)
 void Worker::worker_slot_executeCommand(QStringList aobArguments){
 
     gobProcess = new QProcess(this);
-    QString lsProgram = "pk2cmd";
+    QString lsProgram = aobArguments.takeFirst();
     QString lsCompleteCommand = lsProgram;
     QString lsExitStatus;
     bool lbReturnValue;
