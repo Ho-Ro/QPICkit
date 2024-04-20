@@ -9,7 +9,7 @@ Worker::Worker( QObject *parent ) : QObject( parent ) { giInfoFlag = 0; }
   @param aobArguments - QStringList, array of arguments
 */
 void Worker::worker_slot_executeCommand( QStringList aobArguments ) {
-
+    qDebug() << aobArguments;
     gobProcess = new QProcess( this );
     QString lsProgram = aobArguments.takeFirst();
     QString lsCompleteCommand = lsProgram;
@@ -40,7 +40,8 @@ void Worker::worker_slot_executeCommand( QStringList aobArguments ) {
 void Worker::worker_slot_pickitInfo() {
     giInfoFlag = 1;
     QStringList lobArguments;
-    lobArguments << "-s#";
+    lobArguments << "pk2cmd"
+                 << "-s#";
     this->worker_slot_executeCommand( lobArguments );
 }
 
@@ -49,9 +50,9 @@ void Worker::worker_slot_pickitInfo() {
 */
 void Worker::worker_slot_internalProcessOutputCapture() {
     if ( giInfoFlag == 0 )
-        emit( worker_signal_processOutput( gobProcess->readAllStandardOutput() ) );
+        emit worker_signal_processOutput( gobProcess->readAllStandardOutput() );
     else {
-        emit( worker_signal_pickitInfo( gobProcess->readAllStandardOutput() ) );
+        emit worker_signal_pickitInfo( gobProcess->readAllStandardOutput() );
         giInfoFlag = 0;
     }
 }

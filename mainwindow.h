@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "programmer.h"
 #include "worker.h"
 #include <QMainWindow>
 #include <QMap>
@@ -41,7 +42,6 @@ class MainWindow : public QMainWindow {
     void main_signal_executeCommand( QStringList aobArguments );
     void main_signal_pickitInfo();
 
-
   private:
     Ui::MainWindow *ui;
     QString gsHexFileName;
@@ -49,10 +49,9 @@ class MainWindow : public QMainWindow {
     QStringList gobArguments;
     Worker *gobWorker;
     QString programVersion;
-    QString activeProgrammer = "PICkit2";
     QMap< QString, QMap< QString, QStringList > > progCmds;
+    Programmer programmer;
     QSettings *settings;
-    void setupProgrammer();
     void selectProgrammer( QString programmer );
 };
 

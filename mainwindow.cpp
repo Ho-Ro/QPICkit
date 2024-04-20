@@ -15,8 +15,9 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent ), ui( new Ui::M
     QLoggingCategory::setFilterRules( "qt.qpa.xcb=false" );
     ui->setupUi( this );
 
+    Programmer programmer;
+
     settings = new QSettings( "QPICkit", "QPICkit" );
-    setupProgrammer();
     selectProgrammer( settings->value( "activeProgrammer", "PICkit2" ).toString() );
 
     programVersion = "v2.3";
@@ -46,41 +47,29 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent ), ui( new Ui::M
 }
 
 /**
-  Setup programmer commands
-*/
-void MainWindow::setupProgrammer() {
-    progCmds[ "PICkit2" ][ "Program" ] = QStringList( { "pk2cmd", "-p", "-j", "-m", "-f" } );
-    progCmds[ "PICkit2" ][ "Read" ] = QStringList( { "pk2cmd", "-p", "-j", "-gf" } );
-    progCmds[ "PICkit2" ][ "Verify" ] = QStringList( { "pk2cmd", "-p", "-j", "-y", "-f" } );
-    progCmds[ "PICkit2" ][ "Detect" ] = QStringList( { "pk2cmd", "-p", "-i" } );
-    progCmds[ "PICkit2" ][ "Erase" ] = QStringList( { "pk2cmd", "-p", "-e" } );
-    progCmds[ "PICkit2" ][ "Check" ] = QStringList( { "pk2cmd", "-p", "-c" } );
-
-    progCmds[ "ArdPicProg" ][ "Program" ] = QStringList( { "ardpicprog", "--erase", "--burn", "-i" } );
-    progCmds[ "ArdPicProg" ][ "Read" ] = QStringList( { "ardpicprog", "-o" } );
-    progCmds[ "ArdPicProg" ][ "Detect" ] = QStringList( { "ardpicprog", "--detect" } );
-    progCmds[ "ArdPicProg" ][ "Erase" ] = QStringList( { "ardpicprog", "--erase" } );
-}
-
-/**
   Sets ui according to the selected programmer type
 */
-void MainWindow::selectProgrammer( QString programmer ) {
-    if ( programmer == "PICkit2" ) {
+void MainWindow::selectProgrammer( QString newProgrammer ) {
+    if ( newProgrammer == "PICkit2" ) {
         ui->mainTab->setTabVisible( 2, true );
         ui->pk2RadioButton->setChecked( true );
-        ui->verifyButton->setVisible( true );
-        ui->blankCheckButton->setVisible( true );
-    } else if ( programmer == "ArdPicProg" ) {
+        //} else if ( newProgrammer == "ArdPicProg" ) {
+    } else if ( programmer.isSupported( newProgrammer ) ) { // other supported programmer
         ui->mainTab->setTabVisible( 2, false );
         ui->appRadioButton->setChecked( true );
-        ui->verifyButton->setVisible( false );
-        ui->blankCheckButton->setVisible( false );
     } else // unsupported programmer, do not change
         return;
 
-    activeProgrammer = programmer;
-    settings->setValue( "activeProgrammer", activeProgrammer );
+    programmer.setProgrammer( newProgrammer );
+    settings->setValue( "activeProgrammer", newProgrammer );
+
+    // hide action buttons that are not supported by the programmer
+    ui->programButton->setVisible( programmer.supports( "Program" ) );
+    ui->readButton->setVisible( programmer.supports( "Read" ) );
+    ui->verifyButton->setVisible( programmer.supports( "Verify" ) );
+    ui->detectButton->setVisible( programmer.supports( "Detect" ) );
+    ui->eraseButton->setVisible( programmer.supports( "Erase" ) );
+    ui->blankCheckButton->setVisible( programmer.supports( "Check" ) );
 }
 
 /**
@@ -119,7 +108,7 @@ void MainWindow::on_hexFileButton_clicked() {
 }
 
 /**
-  Click event for button "Burn"
+  Click event for button "Program"
 */
 void MainWindow::on_programButton_clicked() {
     QDir lobDir( QCoreApplication::applicationDirPath() );
@@ -133,7 +122,8 @@ void MainWindow::on_programButton_clicked() {
     if ( !gsHexFileName.isNull() && !gsHexFileName.isEmpty() ) {
         gsHexFileName = lobDir.relativeFilePath( ui->hexFileLineEdit->text() );
 
-        gobArguments = progCmds[ activeProgrammer ][ "Program" ] + QStringList( gsHexFileName );
+        gobArguments = programmer.getCmd( "Program" );
+        gobArguments.append( gsHexFileName );
         emit main_signal_executeCommand( gobArguments );
     } else {
         QMessageBox::critical( this, "ERROR", "Please, select a valid Hex file" );
@@ -144,7 +134,7 @@ void MainWindow::on_programButton_clicked() {
   Click event for button "Detect"
 */
 void MainWindow::on_detectButton_clicked() {
-    gobArguments = progCmds[ activeProgrammer ][ "Detect" ];
+    gobArguments = programmer.getCmd( "Detect" );
     emit main_signal_executeCommand( gobArguments );
 }
 
@@ -152,7 +142,7 @@ void MainWindow::on_detectButton_clicked() {
   Click event for button "Erase""
 */
 void MainWindow::on_eraseButton_clicked() {
-    gobArguments = progCmds[ activeProgrammer ][ "Erase" ];
+    gobArguments = programmer.getCmd( "Erase" );
     emit main_signal_executeCommand( gobArguments );
 }
 
@@ -160,9 +150,7 @@ void MainWindow::on_eraseButton_clicked() {
   Click event for button "Blank Check"
 */
 void MainWindow::on_blankCheckButton_clicked() {
-    gobArguments << "-p"
-                 << "-c"
-                 << "-j";
+    gobArguments = programmer.getCmd( "Check" );
     emit main_signal_executeCommand( gobArguments );
 }
 
@@ -182,7 +170,8 @@ void MainWindow::on_verifyButton_clicked() {
     if ( !gsHexFileName.isNull() && !gsHexFileName.isEmpty() ) {
         gsHexFileName = lobDir.relativeFilePath( ui->hexFileLineEdit->text() );
 
-        gobArguments = progCmds[ activeProgrammer ][ "Verify" ] + QStringList( gsHexFileName );
+        gobArguments = programmer.getCmd( "Verify" );
+        gobArguments.append( gsHexFileName );
         emit main_signal_executeCommand( gobArguments );
     } else {
         QMessageBox::critical( this, "ERROR", "Please, select a valid Hex file" );
@@ -202,7 +191,8 @@ void MainWindow::on_readButton_clicked() {
         ui->hexFileLineEdit->setText( gsHexFileName );
         gsHexFileName = lobDir.relativeFilePath( ui->hexFileLineEdit->text() );
 
-        gobArguments = progCmds[ activeProgrammer ][ "Read" ] + QStringList( gsHexFileName );
+        gobArguments = programmer.getCmd( "Read" );
+        gobArguments.append( gsHexFileName );
         emit main_signal_executeCommand( gobArguments );
     } else {
         QMessageBox::critical( this, "ERROR", "Please, select a valid Hex file" );
@@ -221,7 +211,8 @@ void MainWindow::on_detectPICkitButton_clicked() {
   Click event for button "Set New ID"
 */
 void MainWindow::on_setNewIDButton_clicked() {
-    gobArguments << "-n" << ui->setNewIDLineEdit->text();
+    gobArguments << "pk2cmd"
+                 << "-n" << ui->setNewIDLineEdit->text();
     emit main_signal_executeCommand( gobArguments );
 }
 
