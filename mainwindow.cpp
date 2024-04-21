@@ -15,7 +15,7 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent ), ui( new Ui::M
     QLoggingCategory::setFilterRules( "qt.qpa.xcb=false" );
     ui->setupUi( this );
 
-    Programmer programmer;
+    programmer = new Programmer;
 
     settings = new QSettings( "QPICkit", "QPICkit" );
     selectProgrammer( settings->value( "activeProgrammer", "PICkit2" ).toString() );
@@ -24,12 +24,13 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent ), ui( new Ui::M
 
     setWindowTitle( QString( "PICkit2 %1" ).arg( programVersion ) );
 
-    gobWorker = new Worker;
+    gobWorker = new Worker( parent, programmer );
     workerThread = new QThread;
     gobWorker->moveToThread( workerThread );
     connect( gobWorker, SIGNAL( worker_signal_prepareCommandExecution() ), this, SLOT( main_slot_prepareCommandExecution() ) );
     connect( gobWorker, SIGNAL( worker_signal_processOutput( QString ) ), this, SLOT( main_slot_processOutput( QString ) ) );
     connect( this, SIGNAL( main_signal_pickitInfo() ), gobWorker, SLOT( worker_slot_pickitInfo() ) );
+    connect( this, SIGNAL( main_signal_pickitNewID( QString ) ), gobWorker, SLOT( worker_slot_pickitNewID( QString ) ) );
     connect( gobWorker, SIGNAL( worker_signal_pickitInfo( QString ) ), this, SLOT( main_slot_pickitInfo( QString ) ) );
     connect( this, SIGNAL( main_signal_executeCommand( QStringList ) ), gobWorker,
              SLOT( worker_slot_executeCommand( QStringList ) ) );
@@ -53,23 +54,25 @@ void MainWindow::selectProgrammer( QString newProgrammer ) {
     if ( newProgrammer == "PICkit2" ) {
         ui->mainTab->setTabVisible( 2, true );
         ui->pk2RadioButton->setChecked( true );
-        //} else if ( newProgrammer == "ArdPicProg" ) {
-    } else if ( programmer.isSupported( newProgrammer ) ) { // other supported programmer
+        ui->pickitInfoTextArea->clear();
+        ui->logTextArea->clear();
+    } else if ( programmer->isSupported( newProgrammer ) ) { // other supported programmer
         ui->mainTab->setTabVisible( 2, false );
         ui->appRadioButton->setChecked( true );
+        ui->logTextArea->clear();
     } else // unsupported programmer, do not change
         return;
 
-    programmer.setProgrammer( newProgrammer );
-    settings->setValue( "activeProgrammer", newProgrammer );
+    programmer->setProgrammer( newProgrammer );
+    settings->setValue( "activeProgrammer", newProgrammer ); // make persistent
 
     // hide action buttons that are not supported by the programmer
-    ui->programButton->setVisible( programmer.supports( "Program" ) );
-    ui->readButton->setVisible( programmer.supports( "Read" ) );
-    ui->verifyButton->setVisible( programmer.supports( "Verify" ) );
-    ui->detectButton->setVisible( programmer.supports( "Detect" ) );
-    ui->eraseButton->setVisible( programmer.supports( "Erase" ) );
-    ui->blankCheckButton->setVisible( programmer.supports( "Check" ) );
+    ui->programButton->setVisible( programmer->supportsCmd( "Program" ) );
+    ui->readButton->setVisible( programmer->supportsCmd( "Read" ) );
+    ui->verifyButton->setVisible( programmer->supportsCmd( "Verify" ) );
+    ui->detectButton->setVisible( programmer->supportsCmd( "Detect" ) );
+    ui->eraseButton->setVisible( programmer->supportsCmd( "Erase" ) );
+    ui->blankCheckButton->setVisible( programmer->supportsCmd( "Check" ) );
 }
 
 /**
@@ -122,7 +125,7 @@ void MainWindow::on_programButton_clicked() {
     if ( !gsHexFileName.isNull() && !gsHexFileName.isEmpty() ) {
         gsHexFileName = lobDir.relativeFilePath( ui->hexFileLineEdit->text() );
 
-        gobArguments = programmer.getCmd( "Program" );
+        gobArguments = programmer->getCmd( "Program" );
         gobArguments.append( gsHexFileName );
         emit main_signal_executeCommand( gobArguments );
     } else {
@@ -134,7 +137,7 @@ void MainWindow::on_programButton_clicked() {
   Click event for button "Detect"
 */
 void MainWindow::on_detectButton_clicked() {
-    gobArguments = programmer.getCmd( "Detect" );
+    gobArguments = programmer->getCmd( "Detect" );
     emit main_signal_executeCommand( gobArguments );
 }
 
@@ -142,7 +145,7 @@ void MainWindow::on_detectButton_clicked() {
   Click event for button "Erase""
 */
 void MainWindow::on_eraseButton_clicked() {
-    gobArguments = programmer.getCmd( "Erase" );
+    gobArguments = programmer->getCmd( "Erase" );
     emit main_signal_executeCommand( gobArguments );
 }
 
@@ -150,7 +153,7 @@ void MainWindow::on_eraseButton_clicked() {
   Click event for button "Blank Check"
 */
 void MainWindow::on_blankCheckButton_clicked() {
-    gobArguments = programmer.getCmd( "Check" );
+    gobArguments = programmer->getCmd( "Check" );
     emit main_signal_executeCommand( gobArguments );
 }
 
@@ -170,7 +173,7 @@ void MainWindow::on_verifyButton_clicked() {
     if ( !gsHexFileName.isNull() && !gsHexFileName.isEmpty() ) {
         gsHexFileName = lobDir.relativeFilePath( ui->hexFileLineEdit->text() );
 
-        gobArguments = programmer.getCmd( "Verify" );
+        gobArguments = programmer->getCmd( "Verify" );
         gobArguments.append( gsHexFileName );
         emit main_signal_executeCommand( gobArguments );
     } else {
@@ -191,7 +194,7 @@ void MainWindow::on_readButton_clicked() {
         ui->hexFileLineEdit->setText( gsHexFileName );
         gsHexFileName = lobDir.relativeFilePath( ui->hexFileLineEdit->text() );
 
-        gobArguments = programmer.getCmd( "Read" );
+        gobArguments = programmer->getCmd( "Read" );
         gobArguments.append( gsHexFileName );
         emit main_signal_executeCommand( gobArguments );
     } else {
@@ -200,20 +203,21 @@ void MainWindow::on_readButton_clicked() {
 }
 
 /**
-  Click event for button "Detect programmer"
+  Click event for PICkit2 button "Detect programmer"
 */
 void MainWindow::on_detectPICkitButton_clicked() {
     ui->pickitInfoTextArea->clear();
+    ui->logTextArea->clear();
     emit main_signal_pickitInfo();
 }
 
 /**
-  Click event for button "Set New ID"
+  Click event for PICkit2 button "Set New ID"
 */
 void MainWindow::on_setNewIDButton_clicked() {
-    gobArguments << "pk2cmd"
-                 << "-n" << ui->setNewIDLineEdit->text();
-    emit main_signal_executeCommand( gobArguments );
+    ui->pickitInfoTextArea->clear();
+    ui->logTextArea->clear();
+    emit main_signal_pickitNewID( ui->setNewIDLineEdit->text() );
 }
 
 /**
@@ -224,6 +228,7 @@ void MainWindow::on_setNewIDButton_clicked() {
 */
 void MainWindow::main_slot_prepareCommandExecution() {
     this->main_slot_enableAllButtons( false );
+    ui->pickitInfoTextArea->clear();
     ui->logTextArea->clear();
     gobArguments.clear();
 }

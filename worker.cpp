@@ -2,14 +2,13 @@
 #include <QDebug>
 #include <QProcess>
 
-Worker::Worker( QObject *parent ) : QObject( parent ) { giInfoFlag = 0; }
+Worker::Worker( QObject *parent, Programmer *programmer ) : QObject( parent ), programmer( programmer ) { giInfoFlag = 0; }
 
 /**
   Execute the pk2cmd command with the arguments arriving in an array.
   @param aobArguments - QStringList, array of arguments
 */
 void Worker::worker_slot_executeCommand( QStringList aobArguments ) {
-    qDebug() << aobArguments;
     gobProcess = new QProcess( this );
     QString lsProgram = aobArguments.takeFirst();
     QString lsCompleteCommand = lsProgram;
@@ -30,6 +29,7 @@ void Worker::worker_slot_executeCommand( QStringList aobArguments ) {
         lsExitStatus = "OK";
         lbReturnValue = true;
     }
+    giInfoFlag = 0;
 
     emit worker_signal_taskCompleted( lbReturnValue, lsExitStatus );
 }
@@ -40,8 +40,18 @@ void Worker::worker_slot_executeCommand( QStringList aobArguments ) {
 void Worker::worker_slot_pickitInfo() {
     giInfoFlag = 1;
     QStringList lobArguments;
-    lobArguments << "pk2cmd"
-                 << "-s#";
+    lobArguments = programmer->getCmd( "Info" );
+    this->worker_slot_executeCommand( lobArguments );
+}
+
+/**
+  Execute the command to set the new ID for the connected PICkit2.
+*/
+void Worker::worker_slot_pickitNewID( QString newID ) {
+    giInfoFlag = 1;
+    QStringList lobArguments;
+    lobArguments = programmer->getCmd( "NewID" );
+    lobArguments.append( newID );
     this->worker_slot_executeCommand( lobArguments );
 }
 
@@ -53,6 +63,5 @@ void Worker::worker_slot_internalProcessOutputCapture() {
         emit worker_signal_processOutput( gobProcess->readAllStandardOutput() );
     else {
         emit worker_signal_pickitInfo( gobProcess->readAllStandardOutput() );
-        giInfoFlag = 0;
     }
 }

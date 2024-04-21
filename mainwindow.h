@@ -41,6 +41,7 @@ class MainWindow : public QMainWindow {
   signals:
     void main_signal_executeCommand( QStringList aobArguments );
     void main_signal_pickitInfo();
+    void main_signal_pickitNewID( QString );
 
   private:
     Ui::MainWindow *ui;
@@ -49,8 +50,7 @@ class MainWindow : public QMainWindow {
     QStringList gobArguments;
     Worker *gobWorker;
     QString programVersion;
-    QMap< QString, QMap< QString, QStringList > > progCmds;
-    Programmer programmer;
+    Programmer *programmer;
     QSettings *settings;
     void selectProgrammer( QString programmer );
 };
