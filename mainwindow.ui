@@ -367,13 +367,16 @@
         <property name="checked">
          <bool>true</bool>
         </property>
+        <attribute name="buttonGroup">
+         <string notr="true">buttonGroup</string>
+        </attribute>
        </widget>
        <widget class="QRadioButton" name="appRadioButton">
         <property name="geometry">
          <rect>
           <x>50</x>
           <y>50</y>
-          <width>161</width>
+          <width>100</width>
           <height>20</height>
          </rect>
         </property>
@@ -383,6 +386,9 @@
         <property name="checked">
          <bool>false</bool>
         </property>
+        <attribute name="buttonGroup">
+         <string notr="true">buttonGroup</string>
+        </attribute>
        </widget>
        <widget class="QLabel" name="programmerLabel">
         <property name="geometry">
@@ -407,8 +413,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <resources>
   <include location="img/img.qrc"/>
-  <include location="img/img.qrc"/>
-  <include location="img/img.qrc"/>
  </resources>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>
