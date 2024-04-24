@@ -272,6 +272,11 @@ void MainWindow::on_pk2RadioButton_clicked() { selectProgrammer( "PICkit2" ); }
 void MainWindow::on_appRadioButton_clicked() { selectProgrammer( "ArdPicProg" ); }
 
 /**
+  Click event for the verbose checkbox
+*/
+void MainWindow::on_verboseCheckBox_clicked() { programmer->verbose = ui->verboseCheckBox->isChecked(); }
+
+/**
   Slot that adds the output of the executed command in the log viewer,
   and in the status bar.
   @param asCommandOutput - String containing the output of the executed command.

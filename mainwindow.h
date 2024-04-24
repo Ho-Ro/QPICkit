@@ -26,6 +26,7 @@ class MainWindow : public QMainWindow {
     void on_aboutButton_clicked();
     void on_pk2RadioButton_clicked();
     void on_appRadioButton_clicked();
+    void on_verboseCheckBox_clicked();
     void main_slot_processOutput( QString asCommandOutput );
     void main_slot_pickitInfo( QString asPicKitInfo );
     void on_detectButton_clicked();

@@ -14,6 +14,7 @@ class Programmer {
     const QStringList &getCmd( const QString &action ) { return Programmer::commands[ activeProgrammer ][ action ]; }
     bool isSupported( const QString &thisProgrammer ) { return Programmer::commands.contains( thisProgrammer ); }
     bool supportsCmd( const QString &thisAction ) { return Programmer::commands[ activeProgrammer ].contains( thisAction ); }
+    bool verbose = false;
 
   private:
     QMap< QString, QMap< QString, QStringList > > commands;

@@ -403,6 +403,19 @@
          <string>Programmer</string>
         </property>
        </widget>
+       <widget class="QCheckBox" name="verboseCheckBox">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>90</y>
+          <width>100</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Verbose</string>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>
