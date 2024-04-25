@@ -13,16 +13,36 @@
 MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent ), ui( new Ui::MainWindow ) {
     // suppress nasty warnings, e.g. "qt.qpa.xcb: QXcbConnection: XCB error: 3 (BadWindow) ..."
     QLoggingCategory::setFilterRules( "qt.qpa.xcb=false" );
-    ui->setupUi( this );
-
-    programmer = new Programmer;
-
-    settings = new QSettings( "QPICkit", "QPICkit" );
-    selectProgrammer( settings->value( "activeProgrammer", "PICkit2" ).toString() );
 
     programVersion = "v2.3";
 
+    ui->setupUi( this );
     setWindowTitle( QString( "PICkit2 %1" ).arg( programVersion ) );
+
+    programmer = new Programmer;
+
+    // dynamically create a radio button for each programmer
+    buttonGroup = new QButtonGroup;
+    int xpos = 30, ypos = 30, width = 200, height = 20;
+    for ( auto &name : programmer->names() ) {
+        QRadioButton *rB = new QRadioButton( name, ui->tabSettings );
+        rB->setGeometry( xpos, ypos += 30, width, height );
+        buttonGroup->addButton( rB );
+        prgButtons[ name ] = rB;
+    }
+
+    connect( buttonGroup, QOverload< QAbstractButton * >::of( &QButtonGroup::buttonClicked ), this,
+             [ & ]( QAbstractButton *rB ) { selectProgrammer( rB->text() ); } );
+
+    connect( ui->verboseCheckBox, &QCheckBox::clicked, this, [ & ]( bool status ) {
+        programmer->verbose = status;
+        settings->setValue( "verbose", status );
+    } );
+
+    settings = new QSettings( "QPICkit", "QPICkit" ); // get persistent config
+    selectProgrammer( settings->value( "activeProgrammer", "PICkit2" ).toString() );
+    programmer->verbose = settings->value( "verbose", false ).toBool();
+    ui->verboseCheckBox->setChecked( programmer->verbose );
 
     gobWorker = new Worker( parent, programmer );
     workerThread = new QThread;
@@ -40,6 +60,7 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent ), ui( new Ui::M
     connect( workerThread, SIGNAL( finished() ), workerThread, SLOT( deleteLater() ) );
     workerThread->start();
 
+    // use specific style if exists
     QFile styleFile( "style.qss" );
     if ( styleFile.exists() && styleFile.open( QFile::ReadOnly ) ) {
         QString StyleSheet = QLatin1String( styleFile.readAll() );
@@ -51,22 +72,20 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent ), ui( new Ui::M
   Sets ui according to the selected programmer type
 */
 void MainWindow::selectProgrammer( QString newProgrammer ) {
-    if ( newProgrammer == "PICkit2" ) {
+    if ( newProgrammer == "PICkit2" ) { // special case for PICkit2
         ui->mainTab->setTabVisible( 2, true );
-        ui->pk2RadioButton->setChecked( true );
         ui->pickitInfoTextArea->clear();
-        ui->logTextArea->clear();
     } else if ( programmer->isSupported( newProgrammer ) ) { // other supported programmer
         ui->mainTab->setTabVisible( 2, false );
-        ui->appRadioButton->setChecked( true );
-        ui->logTextArea->clear();
     } else // unsupported programmer, do not change
         return;
 
+    ui->logTextArea->clear();
+    prgButtons[ newProgrammer ]->setChecked( true );
     programmer->setProgrammer( newProgrammer );
     settings->setValue( "activeProgrammer", newProgrammer ); // make persistent
 
-    // hide action buttons that are not supported by the programmer
+    // hide all action buttons that are not supported by the programmer
     ui->programButton->setVisible( programmer->supportsCmd( "Program" ) );
     ui->readButton->setVisible( programmer->supportsCmd( "Read" ) );
     ui->verifyButton->setVisible( programmer->supportsCmd( "Verify" ) );
@@ -260,21 +279,6 @@ void MainWindow::on_aboutButton_clicked() {
 
     QMessageBox::about( this, tr( "About QPICkit %1" ).arg( programVersion ), tr( lsHelpText ) );
 }
-
-/**
-  Click event for selecting PICkit2 programmer
-*/
-void MainWindow::on_pk2RadioButton_clicked() { selectProgrammer( "PICkit2" ); }
-
-/**
-  Click event for selecting ArdPicProg programmer
-*/
-void MainWindow::on_appRadioButton_clicked() { selectProgrammer( "ArdPicProg" ); }
-
-/**
-  Click event for the verbose checkbox
-*/
-void MainWindow::on_verboseCheckBox_clicked() { programmer->verbose = ui->verboseCheckBox->isChecked(); }
 
 /**
   Slot that adds the output of the executed command in the log viewer,

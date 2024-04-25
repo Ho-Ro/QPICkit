@@ -3,8 +3,10 @@
 
 #include "programmer.h"
 #include "worker.h"
+#include <QButtonGroup>
 #include <QMainWindow>
 #include <QMap>
+#include <QRadioButton>
 #include <QSettings>
 #include <QThread>
 
@@ -24,9 +26,6 @@ class MainWindow : public QMainWindow {
     void on_hexFileButton_clicked();
     void on_programButton_clicked();
     void on_aboutButton_clicked();
-    void on_pk2RadioButton_clicked();
-    void on_appRadioButton_clicked();
-    void on_verboseCheckBox_clicked();
     void main_slot_processOutput( QString asCommandOutput );
     void main_slot_pickitInfo( QString asPicKitInfo );
     void on_detectButton_clicked();
@@ -54,6 +53,8 @@ class MainWindow : public QMainWindow {
     Programmer *programmer;
     QSettings *settings;
     void selectProgrammer( QString programmer );
+    QButtonGroup *buttonGroup;
+    QMap< QString, QRadioButton * > prgButtons;
 };
 
 #endif // MAINWINDOW_H
