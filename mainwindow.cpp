@@ -21,28 +21,43 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent ), ui( new Ui::M
 
     programmer = new Programmer;
 
+    programmerLabel = new QLabel( "Programmer", ui->tabSettings );
+    programmerLabel->setGeometry( 20, 10, 100, 20 );
+
     // dynamically create a radio button for each programmer
     buttonGroup = new QButtonGroup;
-    int xpos = 30, ypos = 30, width = 200, height = 20;
-    for ( auto &name : programmer->names() ) {
+    int xpos = 30, ypos = 40, width = 200, height = 20;
+    for ( auto &name : programmer->allDevices() ) {
         QRadioButton *rB = new QRadioButton( name, ui->tabSettings );
-        rB->setGeometry( xpos, ypos += 30, width, height );
+        rB->setGeometry( xpos, ypos, width, height );
+        ypos += 20;
         buttonGroup->addButton( rB );
         prgButtons[ name ] = rB;
     }
+    ypos += 10;
+    capaLog = new QPlainTextEdit( ui->tabSettings );
+    capaLog->setGeometry( xpos, ypos, 350, 350 - ypos );
+    QFont font1;
+    font1.setFamily( QString::fromUtf8( "Noto Mono" ) );
+    capaLog->setFont( font1 );
+    capaLog->setReadOnly( true );
+
+    verboseCB = new QCheckBox( "Verbose", ui->tabSettings );
+    verboseCB->setGeometry( 300, 50, 100, 20 );
 
     connect( buttonGroup, QOverload< QAbstractButton * >::of( &QButtonGroup::buttonClicked ), this,
              [ & ]( QAbstractButton *rB ) { selectProgrammer( rB->text() ); } );
 
-    connect( ui->verboseCheckBox, &QCheckBox::clicked, this, [ & ]( bool status ) {
+    connect( verboseCB, &QCheckBox::clicked, this, [ & ]( bool status ) {
         programmer->verbose = status;
         settings->setValue( "verbose", status );
+        status ? capaLog->show() : capaLog->hide();
     } );
 
     settings = new QSettings( "QPICkit", "QPICkit" ); // get persistent config
     selectProgrammer( settings->value( "activeProgrammer", "PICkit2" ).toString() );
     programmer->verbose = settings->value( "verbose", false ).toBool();
-    ui->verboseCheckBox->setChecked( programmer->verbose );
+    verboseCB->setChecked( programmer->verbose );
 
     gobWorker = new Worker( parent, programmer );
     workerThread = new QThread;
@@ -81,9 +96,13 @@ void MainWindow::selectProgrammer( QString newProgrammer ) {
         return;
 
     ui->logTextArea->clear();
+    capaLog->clear();
     prgButtons[ newProgrammer ]->setChecked( true );
     programmer->setProgrammer( newProgrammer );
     settings->setValue( "activeProgrammer", newProgrammer ); // make persistent
+    capaLog->insertPlainText( newProgrammer + " capabilities:" );
+    for ( auto &capa : programmer->curCapas() )
+        capaLog->appendPlainText( " - " + capa );
 
     // hide all action buttons that are not supported by the programmer
     ui->programButton->setVisible( programmer->supportsCmd( "Program" ) );

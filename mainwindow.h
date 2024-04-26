@@ -4,8 +4,11 @@
 #include "programmer.h"
 #include "worker.h"
 #include <QButtonGroup>
+#include <QCheckBox>
+#include <QLabel>
 #include <QMainWindow>
 #include <QMap>
+#include <QPlainTextEdit>
 #include <QRadioButton>
 #include <QSettings>
 #include <QThread>
@@ -53,8 +56,11 @@ class MainWindow : public QMainWindow {
     Programmer *programmer;
     QSettings *settings;
     void selectProgrammer( QString programmer );
+    QLabel *programmerLabel;
     QButtonGroup *buttonGroup;
     QMap< QString, QRadioButton * > prgButtons;
+    QCheckBox *verboseCB;
+    QPlainTextEdit *capaLog;
 };
 
 #endif // MAINWINDOW_H
