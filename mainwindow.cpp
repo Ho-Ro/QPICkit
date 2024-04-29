@@ -87,7 +87,7 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent ), ui( new Ui::M
   Sets ui according to the selected programmer type
 */
 void MainWindow::selectProgrammer( QString newProgrammer ) {
-    if ( newProgrammer == "PICkit2" ) { // special case for PICkit2
+    if ( newProgrammer == "PICkit2" ) { // enable special page for PICkit2
         ui->mainTab->setTabVisible( 2, true );
         ui->pickitInfoTextArea->clear();
     } else if ( programmer->isSupported( newProgrammer ) ) { // other supported programmer
@@ -104,13 +104,13 @@ void MainWindow::selectProgrammer( QString newProgrammer ) {
     for ( auto &capa : programmer->curCapas() )
         capaLog->appendPlainText( " - " + capa );
 
-    // hide all action buttons that are not supported by the programmer
+    // hide all target action buttons that are not supported by the programmer
     ui->programButton->setVisible( programmer->supportsCmd( "Program" ) );
     ui->readButton->setVisible( programmer->supportsCmd( "Read" ) );
     ui->verifyButton->setVisible( programmer->supportsCmd( "Verify" ) );
-    ui->detectButton->setVisible( programmer->supportsCmd( "Detect" ) );
+    ui->detectButton->setVisible( programmer->supportsCmd( "DetectPIC" ) );
     ui->eraseButton->setVisible( programmer->supportsCmd( "Erase" ) );
-    ui->blankCheckButton->setVisible( programmer->supportsCmd( "Check" ) );
+    ui->blankCheckButton->setVisible( programmer->supportsCmd( "BlankCheck" ) );
 }
 
 /**
@@ -152,6 +152,10 @@ void MainWindow::on_hexFileButton_clicked() {
   Click event for button "Program"
 */
 void MainWindow::on_programButton_clicked() {
+    gobArguments = programmer->getCmd( "Program" );
+    if ( gobArguments.isEmpty() )
+        return;
+
     QDir lobDir( QCoreApplication::applicationDirPath() );
     if ( ui->hexFileLineEdit->text().isNull() || ui->hexFileLineEdit->text().isEmpty() ) {
         gsHexFileName = QFileDialog::getOpenFileName( this, tr( "Open Hex" ), "", tr( "Hex files (*.hex)" ) );
@@ -163,7 +167,6 @@ void MainWindow::on_programButton_clicked() {
     if ( !gsHexFileName.isNull() && !gsHexFileName.isEmpty() ) {
         gsHexFileName = lobDir.relativeFilePath( ui->hexFileLineEdit->text() );
 
-        gobArguments = programmer->getCmd( "Program" );
         gobArguments.append( gsHexFileName );
         emit main_signal_executeCommand( gobArguments );
     } else {
@@ -172,11 +175,12 @@ void MainWindow::on_programButton_clicked() {
 }
 
 /**
-  Click event for button "Detect"
+  Click event for button "Detect PIC"
 */
 void MainWindow::on_detectButton_clicked() {
-    gobArguments = programmer->getCmd( "Detect" );
-    emit main_signal_executeCommand( gobArguments );
+    gobArguments = programmer->getCmd( "DetectPIC" );
+    if ( !gobArguments.isEmpty() )
+        emit main_signal_executeCommand( gobArguments );
 }
 
 /**
@@ -184,21 +188,27 @@ void MainWindow::on_detectButton_clicked() {
 */
 void MainWindow::on_eraseButton_clicked() {
     gobArguments = programmer->getCmd( "Erase" );
-    emit main_signal_executeCommand( gobArguments );
+    if ( !gobArguments.isEmpty() )
+        emit main_signal_executeCommand( gobArguments );
 }
 
 /**
   Click event for button "Blank Check"
 */
 void MainWindow::on_blankCheckButton_clicked() {
-    gobArguments = programmer->getCmd( "Check" );
-    emit main_signal_executeCommand( gobArguments );
+    gobArguments = programmer->getCmd( "BlankCheck" );
+    if ( !gobArguments.isEmpty() )
+        emit main_signal_executeCommand( gobArguments );
 }
 
 /**
   Click event for button "Verify"
 */
 void MainWindow::on_verifyButton_clicked() {
+    gobArguments = programmer->getCmd( "Verify" );
+    if ( gobArguments.isEmpty() )
+        return;
+
     QDir lobDir( QCoreApplication::applicationDirPath() );
 
     if ( ui->hexFileLineEdit->text().isNull() || ui->hexFileLineEdit->text().isEmpty() ) {
@@ -211,7 +221,6 @@ void MainWindow::on_verifyButton_clicked() {
     if ( !gsHexFileName.isNull() && !gsHexFileName.isEmpty() ) {
         gsHexFileName = lobDir.relativeFilePath( ui->hexFileLineEdit->text() );
 
-        gobArguments = programmer->getCmd( "Verify" );
         gobArguments.append( gsHexFileName );
         emit main_signal_executeCommand( gobArguments );
     } else {
@@ -223,6 +232,10 @@ void MainWindow::on_verifyButton_clicked() {
   Click event for button "Read"
 */
 void MainWindow::on_readButton_clicked() {
+    gobArguments = programmer->getCmd( "Read" );
+    if ( gobArguments.isEmpty() )
+        return;
+
     QDir lobDir( QCoreApplication::applicationDirPath() );
     gsHexFileName = QFileDialog::getSaveFileName( this, tr( "Save Hex" ), "", tr( "Hex files (*.hex)" ) );
     if ( !gsHexFileName.isNull() && !gsHexFileName.isEmpty() ) {
@@ -232,7 +245,6 @@ void MainWindow::on_readButton_clicked() {
         ui->hexFileLineEdit->setText( gsHexFileName );
         gsHexFileName = lobDir.relativeFilePath( ui->hexFileLineEdit->text() );
 
-        gobArguments = programmer->getCmd( "Read" );
         gobArguments.append( gsHexFileName );
         emit main_signal_executeCommand( gobArguments );
     } else {
@@ -243,7 +255,7 @@ void MainWindow::on_readButton_clicked() {
 /**
   Click event for PICkit2 button "Detect programmer"
 */
-void MainWindow::on_detectPICkitButton_clicked() {
+void MainWindow::on_detectPICkit2Button_clicked() {
     ui->pickitInfoTextArea->clear();
     ui->logTextArea->clear();
     emit main_signal_pickitInfo();

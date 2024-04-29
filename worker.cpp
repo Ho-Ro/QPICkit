@@ -42,8 +42,9 @@ void Worker::worker_slot_executeCommand( QStringList aobArguments ) {
 void Worker::worker_slot_pickitInfo() {
     giInfoFlag = 1;
     QStringList lobArguments;
-    lobArguments = programmer->getCmd( "Info" );
-    this->worker_slot_executeCommand( lobArguments );
+    lobArguments = programmer->getCmd( "pk2Info" );
+    if ( !lobArguments.isEmpty() )
+        this->worker_slot_executeCommand( lobArguments );
 }
 
 /**
@@ -52,7 +53,9 @@ void Worker::worker_slot_pickitInfo() {
 void Worker::worker_slot_pickitNewID( QString newID ) {
     giInfoFlag = 1;
     QStringList lobArguments;
-    lobArguments = programmer->getCmd( "NewID" );
+    lobArguments = programmer->getCmd( "pk2NewID" );
+    if ( lobArguments.isEmpty() )
+        return;
     lobArguments.append( newID );
     this->worker_slot_executeCommand( lobArguments );
 }

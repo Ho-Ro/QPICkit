@@ -36,7 +36,7 @@ class MainWindow : public QMainWindow {
     void on_blankCheckButton_clicked();
     void on_verifyButton_clicked();
     void on_readButton_clicked();
-    void on_detectPICkitButton_clicked();
+    void on_detectPICkit2Button_clicked();
     void on_setNewIDButton_clicked();
     void main_slot_prepareCommandExecution();
     void main_slot_taskCompleted( bool abExitStatus, QString asExitString );

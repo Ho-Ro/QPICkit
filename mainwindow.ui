@@ -332,9 +332,9 @@
          </widget>
         </item>
         <item row="0" column="0" colspan="2">
-         <widget class="QPushButton" name="detectPICkitButton">
+         <widget class="QPushButton" name="detectPICkit2Button">
           <property name="text">
-           <string>Detect programmer</string>
+           <string>Detect PICkit2</string>
           </property>
           <property name="icon">
            <iconset resource="img/img.qrc">
