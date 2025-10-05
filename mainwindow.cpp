@@ -95,6 +95,7 @@ void MainWindow::selectProgrammer( QString newProgrammer ) {
     } else // unsupported programmer, do not change
         return;
 
+    setWindowTitle( QString( "PICkit2 %1 - %2" ).arg( programVersion ).arg( newProgrammer ) );
     ui->logTextArea->clear();
     capaLog->clear();
     prgButtons[ newProgrammer ]->setChecked( true );
@@ -166,8 +167,7 @@ void MainWindow::on_programButton_clicked() {
 
     if ( !gsHexFileName.isNull() && !gsHexFileName.isEmpty() ) {
         gsHexFileName = lobDir.absoluteFilePath( ui->hexFileLineEdit->text() );
-
-        gobArguments.append( gsHexFileName );
+        gobArguments.append( gobArguments.takeLast().append( gsHexFileName ) );
         emit main_signal_executeCommand( gobArguments );
     } else {
         QMessageBox::critical( this, "ERROR", "Please, select a valid Hex file" );
@@ -220,8 +220,7 @@ void MainWindow::on_verifyButton_clicked() {
 
     if ( !gsHexFileName.isNull() && !gsHexFileName.isEmpty() ) {
         gsHexFileName = lobDir.absoluteFilePath( ui->hexFileLineEdit->text() );
-
-        gobArguments.append( gsHexFileName );
+        gobArguments.append( gobArguments.takeLast().append( gsHexFileName ) );
         emit main_signal_executeCommand( gobArguments );
     } else {
         QMessageBox::critical( this, "ERROR", "Please, select a valid Hex file" );
@@ -244,8 +243,7 @@ void MainWindow::on_readButton_clicked() {
         }
         ui->hexFileLineEdit->setText( gsHexFileName );
         gsHexFileName = lobDir.absoluteFilePath( ui->hexFileLineEdit->text() );
-
-        gobArguments.append( gsHexFileName );
+        gobArguments.append( gobArguments.takeLast().append( gsHexFileName ) );
         emit main_signal_executeCommand( gobArguments );
     } else {
         QMessageBox::critical( this, "ERROR", "Please, select a valid Hex file" );
@@ -304,8 +302,10 @@ void MainWindow::on_aboutButton_clicked() {
     const char *lsHelpText = ( "<h2>QPICkit</h2>"
                                "<p>pk2cmd GUI for Linux<br/>"
                                "Use with PICkit2 and compatible<br/>"
+                               "or with <a href = \"https://github.com/Ho-Ro/PICkit1\">"
+                               "PICkit1</a> flash starter kit<br/>"
                                "or with <a href = \"https://github.com/Ho-Ro/ArdPicProg\">"
-                               "ArdPicProg</a> programmer</p>"
+                               "ArdPicProg</a> programmer.</p>"
                                "<p><a href=\"https://github.com/Ho-Ro/QPICkit\">https://github.com/Ho-Ro/QPICkit</a></p>" );
 
     QMessageBox::about( this, tr( "About QPICkit %1" ).arg( programVersion ), tr( lsHelpText ) );

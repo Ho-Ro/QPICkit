@@ -16,7 +16,7 @@ void Worker::worker_slot_executeCommand( QStringList aobArguments ) {
     bool lbReturnValue;
 
     for ( int liIndex = 0; liIndex < aobArguments.size(); liIndex++ ) {
-        lsCompleteCommand += " " + aobArguments.at( liIndex );
+        lsCompleteCommand.append( " " ).append( aobArguments.at( liIndex ) );
     }
     if ( programmer->verbose )
         qDebug() << lsCompleteCommand;
