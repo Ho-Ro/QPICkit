@@ -1,12 +1,15 @@
 # QPICkit
 
-
 ![QPICkit](QPICkit.png)
 
 Simple and quick pk2cmd front end. This is a GUI for the pk2cmd command line tool
 for programming PIC microcontrollers,
-using the [PICkit2](https://www.microchip.com/en-us/development-tool/pg164120)
-or [ArdPicProg](https://github.com/Ho-Ro/ArdPicProg) programmer and debugger hardware.
+using one of
+
+- [PICkit2](https://www.microchip.com/en-us/development-tool/pg164120)
+- [ArdPicProg](https://github.com/Ho-Ro/ArdPicProg) programmer and debugger hardware
+- [PICkit1](https://github.com/Ho-Ro/PICkit1) flash starter kit
+
 Other programmer can be added to the file [`programmer.cpp`](programmer.cpp).
 
 **NOTE**: You must install pk2cmd on your system first!: (The following links are given as reference only)

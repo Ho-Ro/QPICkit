@@ -1,6 +1,8 @@
 # build artifacts
 QPICkit.pro.user
+QPICkit.pro.user.*
 .qmake.stash
+.qtc_clangd/*
 Makefile
 QPICkit
 moc_*
@@ -24,3 +26,4 @@ ui_*
 # programmer binaries
 pk2cmd
 ardpicprog
+pickit1

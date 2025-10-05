@@ -14,7 +14,7 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent ), ui( new Ui::M
     // suppress nasty warnings, e.g. "qt.qpa.xcb: QXcbConnection: XCB error: 3 (BadWindow) ..."
     QLoggingCategory::setFilterRules( "qt.qpa.xcb=false" );
 
-    programVersion = "v2.3";
+    programVersion = "v2.4";
 
     ui->setupUi( this );
     setWindowTitle( QString( "PICkit2 %1" ).arg( programVersion ) );
@@ -165,7 +165,7 @@ void MainWindow::on_programButton_clicked() {
     }
 
     if ( !gsHexFileName.isNull() && !gsHexFileName.isEmpty() ) {
-        gsHexFileName = lobDir.relativeFilePath( ui->hexFileLineEdit->text() );
+        gsHexFileName = lobDir.absoluteFilePath( ui->hexFileLineEdit->text() );
 
         gobArguments.append( gsHexFileName );
         emit main_signal_executeCommand( gobArguments );
@@ -219,7 +219,7 @@ void MainWindow::on_verifyButton_clicked() {
     }
 
     if ( !gsHexFileName.isNull() && !gsHexFileName.isEmpty() ) {
-        gsHexFileName = lobDir.relativeFilePath( ui->hexFileLineEdit->text() );
+        gsHexFileName = lobDir.absoluteFilePath( ui->hexFileLineEdit->text() );
 
         gobArguments.append( gsHexFileName );
         emit main_signal_executeCommand( gobArguments );
@@ -243,7 +243,7 @@ void MainWindow::on_readButton_clicked() {
             gsHexFileName += ".hex";
         }
         ui->hexFileLineEdit->setText( gsHexFileName );
-        gsHexFileName = lobDir.relativeFilePath( ui->hexFileLineEdit->text() );
+        gsHexFileName = lobDir.absoluteFilePath( ui->hexFileLineEdit->text() );
 
         gobArguments.append( gsHexFileName );
         emit main_signal_executeCommand( gobArguments );

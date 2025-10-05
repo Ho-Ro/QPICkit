@@ -3,7 +3,7 @@
 Programmer::Programmer() {
     // The mainwindow supports the target commands "Program", "Read", "Verify", "Detect", "Erase", blank "Check"
     // The PICkit2 window provides support for PICkit2 related commands "Info" and set "NewID"
-    // Other progammer may provide only a subset of the target commands, the unsupported buttons will be hidden
+    // Other optional progammer may provide only a subset of the target commands, the unsupported buttons will be hidden
 
     // PICkit2 target cmds
     commands[ "PICkit2" ][ "Program" ] = QStringList( { "pk2cmd", "-p", "-j", "-m", "-f" } );
@@ -15,6 +15,14 @@ Programmer::Programmer() {
     // PICkit2 programmer cmds
     commands[ "PICkit2" ][ "pk2Info" ] = QStringList( { "pk2cmd", "-s#" } );
     commands[ "PICkit2" ][ "pk2NewID" ] = QStringList( { "pk2cmd", "-n" } );
+
+    // PICkit1 target cmds
+    commands[ "PICkit1" ][ "Program" ] = QStringList( { "pickit1", "-p" } );
+    commands[ "PICkit1" ][ "Read" ] = QStringList( { "pickit1", "-x" } );
+    commands[ "PICkit1" ][ "Verify" ] = QStringList( { "pickit1", "-v" } );
+    commands[ "PICkit1" ][ "DetectPIC" ] = QStringList( { "pickit1", "-c" } );
+    commands[ "PICkit1" ][ "Erase" ] = QStringList( { "pickit1", "-e" } );
+    commands[ "PICkit1" ][ "BlankCheck" ] = QStringList( { "pickit1", "-b" } );
 
     // ArdPicProg target cmds
     commands[ "ArdPicProg" ][ "Program" ] = QStringList( { "ardpicprog", "--erase", "--burn", "-i" } );
