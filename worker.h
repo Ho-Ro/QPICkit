@@ -13,7 +13,7 @@ class Worker : public QObject {
   signals:
     void worker_signal_processOutput( QString output );
     void worker_signal_pickitInfo( QString info );
-    void worker_signal_prepareCommandExecution();
+    void worker_signal_prepareCommandExecution( QString cmd );
     void worker_signal_taskCompleted( bool abExitStatus, QString asExitString );
 
   public slots:

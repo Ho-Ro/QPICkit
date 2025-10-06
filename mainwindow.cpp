@@ -62,7 +62,7 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent ), ui( new Ui::M
     gobWorker = new Worker( parent, programmer );
     workerThread = new QThread;
     gobWorker->moveToThread( workerThread );
-    connect( gobWorker, SIGNAL( worker_signal_prepareCommandExecution() ), this, SLOT( main_slot_prepareCommandExecution() ) );
+    connect( gobWorker, SIGNAL( worker_signal_prepareCommandExecution( QString ) ), this, SLOT( main_slot_prepareCommandExecution( QString ) ) );
     connect( gobWorker, SIGNAL( worker_signal_processOutput( QString ) ), this, SLOT( main_slot_processOutput( QString ) ) );
     connect( this, SIGNAL( main_signal_pickitInfo() ), gobWorker, SLOT( worker_slot_pickitInfo() ) );
     connect( this, SIGNAL( main_signal_pickitNewID( QString ) ), gobWorker, SLOT( worker_slot_pickitNewID( QString ) ) );
@@ -168,6 +168,7 @@ void MainWindow::on_programButton_clicked() {
     if ( !gsHexFileName.isNull() && !gsHexFileName.isEmpty() ) {
         gsHexFileName = lobDir.absoluteFilePath( ui->hexFileLineEdit->text() );
         gobArguments.append( gobArguments.takeLast().append( gsHexFileName ) );
+        ui->statusBar->showMessage( "Program ..." );
         emit main_signal_executeCommand( gobArguments );
     } else {
         QMessageBox::critical( this, "ERROR", "Please, select a valid Hex file" );
@@ -179,8 +180,10 @@ void MainWindow::on_programButton_clicked() {
 */
 void MainWindow::on_detectButton_clicked() {
     gobArguments = programmer->getCmd( "DetectPIC" );
-    if ( !gobArguments.isEmpty() )
+    if ( !gobArguments.isEmpty() ) {
+        ui->statusBar->showMessage( "Detect PIC ..." );
         emit main_signal_executeCommand( gobArguments );
+    }
 }
 
 /**
@@ -188,8 +191,10 @@ void MainWindow::on_detectButton_clicked() {
 */
 void MainWindow::on_eraseButton_clicked() {
     gobArguments = programmer->getCmd( "Erase" );
-    if ( !gobArguments.isEmpty() )
+    if ( !gobArguments.isEmpty() ) {
+        ui->statusBar->showMessage( "Erase ..." );
         emit main_signal_executeCommand( gobArguments );
+    }
 }
 
 /**
@@ -197,8 +202,10 @@ void MainWindow::on_eraseButton_clicked() {
 */
 void MainWindow::on_blankCheckButton_clicked() {
     gobArguments = programmer->getCmd( "BlankCheck" );
-    if ( !gobArguments.isEmpty() )
+    if ( !gobArguments.isEmpty() ) {
+        ui->statusBar->showMessage( "Blank Check ..." );
         emit main_signal_executeCommand( gobArguments );
+    }
 }
 
 /**
@@ -221,6 +228,7 @@ void MainWindow::on_verifyButton_clicked() {
     if ( !gsHexFileName.isNull() && !gsHexFileName.isEmpty() ) {
         gsHexFileName = lobDir.absoluteFilePath( ui->hexFileLineEdit->text() );
         gobArguments.append( gobArguments.takeLast().append( gsHexFileName ) );
+        ui->statusBar->showMessage( "Verify ..." );
         emit main_signal_executeCommand( gobArguments );
     } else {
         QMessageBox::critical( this, "ERROR", "Please, select a valid Hex file" );
@@ -244,6 +252,7 @@ void MainWindow::on_readButton_clicked() {
         ui->hexFileLineEdit->setText( gsHexFileName );
         gsHexFileName = lobDir.absoluteFilePath( ui->hexFileLineEdit->text() );
         gobArguments.append( gobArguments.takeLast().append( gsHexFileName ) );
+        ui->statusBar->showMessage( "Read ..." );
         emit main_signal_executeCommand( gobArguments );
     } else {
         QMessageBox::critical( this, "ERROR", "Please, select a valid Hex file" );
@@ -270,14 +279,14 @@ void MainWindow::on_setNewIDButton_clicked() {
 
 /**
   Prepares the application to execute the following command,
-  clearing the event log,
+  showing the cmd in the event log,
   disabling all buttons on the main tab
   and clearing the argument array.
 */
-void MainWindow::main_slot_prepareCommandExecution() {
+void MainWindow::main_slot_prepareCommandExecution( QString cmd ) {
     this->main_slot_enableAllButtons( false );
     ui->pickitInfoTextArea->clear();
-    ui->logTextArea->clear();
+    ui->logTextArea->setPlainText( cmd );
     gobArguments.clear();
 }
 
@@ -300,8 +309,8 @@ void MainWindow::main_slot_taskCompleted( bool abExitStatus, QString asExitStrin
 */
 void MainWindow::on_aboutButton_clicked() {
     const char *lsHelpText = ( "<h2>QPICkit</h2>"
-                               "<p>pk2cmd GUI for Linux<br/>"
-                               "Use with PICkit2 and compatible<br/>"
+                               "<p>PIC programmer GUI for Linux<br/>"
+                               "Use with pk2cmd on PICkit2 and compatible<br/>"
                                "or with <a href = \"https://github.com/Ho-Ro/PICkit1\">"
                                "PICkit1</a> flash starter kit<br/>"
                                "or with <a href = \"https://github.com/Ho-Ro/ArdPicProg\">"
@@ -325,7 +334,7 @@ void MainWindow::main_slot_processOutput( QString asCommandOutput ) {
         } else {                                                                // append new line
             ui->logTextArea->appendPlainText( asCommandOutput );
         }
-        ui->statusBar->showMessage( asCommandOutput.simplified(), 5000 );
+        ui->statusBar->clearMessage();
     }
 }
 

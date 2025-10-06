@@ -38,7 +38,7 @@ class MainWindow : public QMainWindow {
     void on_readButton_clicked();
     void on_detectPICkit2Button_clicked();
     void on_setNewIDButton_clicked();
-    void main_slot_prepareCommandExecution();
+    void main_slot_prepareCommandExecution( QString cmd );
     void main_slot_taskCompleted( bool abExitStatus, QString asExitString );
 
   signals:
