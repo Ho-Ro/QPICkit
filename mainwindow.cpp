@@ -286,7 +286,11 @@ void MainWindow::on_setNewIDButton_clicked() {
 void MainWindow::main_slot_prepareCommandExecution( QString cmd ) {
     this->main_slot_enableAllButtons( false );
     ui->pickitInfoTextArea->clear();
-    ui->logTextArea->setPlainText( cmd );
+    ui->mainTab->setCurrentIndex( 1 ); // switch to log tab
+    if ( programmer->verbose )
+        ui->logTextArea->setPlainText( cmd.append( '\n' ) );
+    else
+        ui->logTextArea->clear();
     gobArguments.clear();
 }
 
@@ -302,6 +306,7 @@ void MainWindow::main_slot_taskCompleted( bool abExitStatus, QString asExitStrin
     if ( !abExitStatus ) {
         ui->logTextArea->appendPlainText( asExitString );
     }
+    ui->statusBar->clearMessage();
 }
 
 /**
@@ -310,7 +315,8 @@ void MainWindow::main_slot_taskCompleted( bool abExitStatus, QString asExitStrin
 void MainWindow::on_aboutButton_clicked() {
     const char *lsHelpText = ( "<h2>QPICkit</h2>"
                                "<p>PIC programmer GUI for Linux<br/>"
-                               "Use with pk2cmd on PICkit2 and compatible<br/>"
+                               "Use with <a href = \"https://github.com/cjacker/pk2cmd-minus\">"
+                               "pk2cmd</a> on PICkit2 and compatible<br/>"
                                "or with <a href = \"https://github.com/Ho-Ro/PICkit1\">"
                                "PICkit1</a> flash starter kit<br/>"
                                "or with <a href = \"https://github.com/Ho-Ro/ArdPicProg\">"
@@ -321,20 +327,15 @@ void MainWindow::on_aboutButton_clicked() {
 }
 
 /**
-  Slot that adds the output of the executed command in the log viewer,
-  and in the status bar.
+  Slot that adds the output of the executed command in the log viewer.
   @param asCommandOutput - String containing the output of the executed command.
 */
 void MainWindow::main_slot_processOutput( QString asCommandOutput ) {
-    if ( !asCommandOutput.isNull() && asCommandOutput != "\n" && asCommandOutput != "\r" &&
-         asCommandOutput != "\r                              \r" ) { // ignore white space lines
-        if ( asCommandOutput.startsWith( "\r" ) ) {                  // replace current line
-            ui->logTextArea->moveCursor( QTextCursor::StartOfLine, QTextCursor::KeepAnchor );
-            ui->logTextArea->insertPlainText( asCommandOutput.remove( 0, 1 ) ); // remove leading '\r' );
-        } else {                                                                // append new line
-            ui->logTextArea->appendPlainText( asCommandOutput );
-        }
-        ui->statusBar->clearMessage();
+    // do some preformatting of pk2cmd output
+    QStringList lines = asCommandOutput.remove( "\b \b" ).remove('\b').split( '\n', Qt::SkipEmptyParts );
+    for ( QString line : lines ) {
+        if ( line.length() < 3 ) continue;
+        ui->logTextArea->appendPlainText( line );
     }
 }
 

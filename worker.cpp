@@ -18,8 +18,6 @@ void Worker::worker_slot_executeCommand( QStringList aobArguments ) {
     for ( int liIndex = 0; liIndex < aobArguments.size(); liIndex++ ) {
         lsCompleteCommand.append( " " ).append( aobArguments.at( liIndex ) );
     }
-    if ( programmer->verbose )
-        qDebug() << lsCompleteCommand;
     emit worker_signal_prepareCommandExecution( lsCompleteCommand );
     gobProcess->setProcessChannelMode( QProcess::MergedChannels );
     connect( gobProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( worker_slot_internalProcessOutputCapture() ) );

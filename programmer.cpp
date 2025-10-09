@@ -6,9 +6,9 @@ Programmer::Programmer() {
     // Other optional progammer may provide only a subset of the target commands, the unsupported buttons will be hidden
 
     // PICkit2 target cmds
-    commands[ "PICkit2" ][ "Program" ] = QStringList( { "pk2cmd", "-p", "-j", "-m", "-f" } );
-    commands[ "PICkit2" ][ "Read" ] = QStringList( { "pk2cmd", "-p", "-j", "-gf" } );
-    commands[ "PICkit2" ][ "Verify" ] = QStringList( { "pk2cmd", "-p", "-j", "-y", "-f" } );
+    commands[ "PICkit2" ][ "Program" ] = QStringList( { "pk2cmd", "-p", "-m", "-f" } );
+    commands[ "PICkit2" ][ "Read" ] = QStringList( { "pk2cmd", "-p", "-gf" } );
+    commands[ "PICkit2" ][ "Verify" ] = QStringList( { "pk2cmd", "-p", "-y", "-f" } );
     commands[ "PICkit2" ][ "DetectPIC" ] = QStringList( { "pk2cmd", "-p", "-i" } );
     commands[ "PICkit2" ][ "Erase" ] = QStringList( { "pk2cmd", "-p", "-e" } );
     commands[ "PICkit2" ][ "BlankCheck" ] = QStringList( { "pk2cmd", "-p", "-c" } );
